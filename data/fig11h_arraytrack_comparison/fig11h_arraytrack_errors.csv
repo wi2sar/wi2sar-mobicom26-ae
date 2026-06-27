@@ -1,0 +1,73 @@
+series,angle_deg,angular_error_deg,provenance,metric_column
+ArrayTrack-Cont,0,1.000,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,15,0.000,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,30,4.905,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,45,7.524,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,60,6.571,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,75,13.286,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,90,23.048,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,105,1.095,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,120,5.238,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,135,1.524,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,150,1.810,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,165,3.000,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,180,1.810,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,195,3.857,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,210,2.667,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,225,4.952,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,240,6.429,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,255,3.476,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,270,20.333,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,285,3.810,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,300,6.095,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,315,4.952,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,330,0.667,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-Cont,345,2.000,arraytrack_cont_reference,mean_abs_diff
+ArrayTrack-One,0,1.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,15,12.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,30,38.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,45,46.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,60,57.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,75,82.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,90,101.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,105,77.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,120,63.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,135,44.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,150,32.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,165,16.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,180,2.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,195,24.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,210,71.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,225,85.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,240,55.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,255,123.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,270,154.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,285,11.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,300,58.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,315,42.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,330,107.0,arraytrack_one_reference,abs(00000)
+ArrayTrack-One,345,26.0,arraytrack_one_reference,abs(00000)
+Wi2SAR (2D),0.0,14.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),90.0,6.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),180.0,6.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),270.0,7.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),285.0,0.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),300.0,16.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),315.0,15.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),330.0,3.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),345.0,12.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),15.0,7.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),30.0,7.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),45.0,8.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),60.0,7.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),75.0,3.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),105.0,3.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),120.0,6.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),135.0,1.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),150.0,5.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),165.0,3.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),195.0,4.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),225.0,9.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),240.0,12.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),255.0,4.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)
+Wi2SAR (2D),210.0,8.0,wi2sar_2d_reference,abs(predicted_true_circular_diff)

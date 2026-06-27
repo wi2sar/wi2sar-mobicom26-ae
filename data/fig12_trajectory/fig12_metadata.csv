@@ -1,0 +1,13 @@
+figure_id,input_csv,topic,phone_name,pose,lat,lon,alt_m_diff_min,alt_m_diff_max,yaw_min,yaw_max,gps_ts_ms_min,gps_ts_ms_max,roll_min,roll_max,head_width,head_length
+fig12a,fig12a_zigzag.csv,zigzag,IP15,middle-bag,22.27905,114.127418,19.0,30.0,100.0,,245000.0,1200000.0,-2.0,2.0,0.8,1
+fig12a,fig12a_zigzag.csv,zigzag,RMN10,held,22.278921503730217,114.12710773551976,19.0,30.0,100.0,,245000.0,1200000.0,-2.0,2.0,0.8,1
+fig12a,fig12a_zigzag.csv,zigzag,HONR,under-grass,22.27919307532737,114.12736819695056,19.0,30.0,100.0,,245000.0,1200000.0,-2.0,2.0,0.8,1
+fig12a,fig12a_zigzag.csv,zigzag,OPPO,under-tree,22.278799796342074,114.12732250555052,19.0,30.0,100.0,,245000.0,1200000.0,-2.0,2.0,0.8,1
+fig12a,fig12a_zigzag.csv,zigzag,IP11,shade-of-building,22.27917570236384,114.12745403138328,19.0,30.0,100.0,,245000.0,1200000.0,-2.0,2.0,0.8,1
+fig12a,fig12a_zigzag.csv,zigzag,IPAD,in-box,22.278887,114.127102,19.0,30.0,100.0,,245000.0,1200000.0,-2.0,2.0,0.8,1
+fig12b,fig12b_large_area_search.csv,search_grid_full,IP15,missing-point#5,22.402261,114.275616,80.0,,,,,,,,0.8,20
+fig12b,fig12b_large_area_search.csv,search_grid_full,RMN10,missing-point#2,22.402243,114.275512,80.0,,,,,,,,0.8,20
+fig12b,fig12b_large_area_search.csv,search_grid_full,RMN5,missing-point#3,22.402584,114.276402,80.0,,,,,,,,0.8,20
+fig12b,fig12b_large_area_search.csv,search_grid_full,IPAD,missing-point#5,22.403055,114.277053,80.0,,,,,,,,0.8,20
+fig12b,fig12b_large_area_search.csv,search_grid_full,IP11,missing-point#2,22.403518,114.278317,80.0,,,,,,,,0.8,20
+fig12c,fig12c_full_wi2sar_trial.csv,search1,IP15,missing#1,22.402448,114.276218,,,,,902739.0,1261139.0,,,0.8,1

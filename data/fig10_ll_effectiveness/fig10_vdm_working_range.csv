@@ -1,0 +1,9 @@
+scenario,frequency_ghz,lens,working_range_m,source
+LoS,2.4,without_ll,298.8461142,Fig.10(c) working-range measurement table
+LoS,2.4,with_ll,607.8404396,Fig.10(c) working-range measurement table
+LoS,5.0,without_ll,238.7341618,Fig.10(c) working-range measurement table
+LoS,5.0,with_ll,429.3309313056103,Fig.10(c) working-range measurement table
+NLoS,2.4,without_ll,147.4143819,Fig.10(c) working-range measurement table
+NLoS,2.4,with_ll,255.6736201,Fig.10(c) working-range measurement table
+NLoS,5.0,without_ll,77.89736838,Fig.10(c) working-range measurement table
+NLoS,5.0,with_ll,149.0,Fig.10(c) working-range measurement table

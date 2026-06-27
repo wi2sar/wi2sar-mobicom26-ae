@@ -1,0 +1,9 @@
+numpy
+pandas
+matplotlib
+plotly
+scipy
+nbconvert
+ipykernel
+PyYAML
+loguru
