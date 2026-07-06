@@ -3,7 +3,7 @@
 This directory contains the executable artifact package for the Wi2SAR
 submission. The package is self-contained for the supported data-backed
 figures: it includes package-local CSV inputs, the direction-finding helpers,
-the visualization functions, reference images, and regenerated outputs.
+the visualization functions, reference images, and reproduced outputs.
 
 The primary entry point is:
 
@@ -28,7 +28,7 @@ wrappers for individual figures.
   function in `viz/charts.py`.
 - `frontend/reference_images/`: manuscript reference images used in notebook
   markdown cells for visual comparison.
-- `output/`: regenerated figures written by the notebook and plotting
+- `output/`: reproduced figures written by the notebook and plotting
   functions.
 - `requirements.txt`: Python package requirements.
 
@@ -60,7 +60,7 @@ jupyter nbconvert --to notebook --execute --inplace mobicom26_artifact_evaluatio
 
 The notebook executes in place and leaves the rendered outputs in the notebook.
 Figure files are also written under `output/`. Existing files in `output/` may
-be replaced by regenerated versions.
+be replaced by newly computed versions.
 
 ## Supported Results
 
@@ -74,7 +74,7 @@ The executable notebook focuses on the data-backed results below.
 - Figure 12(a-c): trajectory visualizations from flight-log CSVs, including
   interactive 3D views for the supported search trajectories.
 
-Reference-only figures are shown only where they help compare a regenerated
+Reference-only figures are shown only where they help compare a reproduced
 result with the manuscript figure. System diagrams and other figures without a
 data-backed executable reproduction are not part of the one-click notebook.
 
@@ -91,7 +91,7 @@ The notebook uses package-local CSV files:
 - `data/fig12_trajectory/`: flight-log trajectory extracts and metadata.
 
 These files are treated as inputs. Reproduction code reads from `data/` and
-writes regenerated figures to `output/`.
+writes reproduced figures to `output/`.
 
 ## Visualization API
 

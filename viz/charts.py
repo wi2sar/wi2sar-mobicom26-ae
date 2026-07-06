@@ -2,7 +2,7 @@
 
 The public figure functions in this module are the importable one-click entry
 points used by ``mobicom26_artifact_evaluation.ipynb``. They read only
-package-local CSV files under ``data/`` and write regenerated artifacts under
+package-local CSV files under ``data/`` and write reproduced artifacts under
 ``output/``.
 """
 # ruff: noqa: E402,F811
@@ -1306,6 +1306,7 @@ def plot_cdf(df: pd.DataFrame, out_base: Path | None = None) -> plt.Figure:
     ]
 
     fig, ax = plt.subplots(1, 1, figsize=(4, 3))
+    set_white_background(fig)
     max_x = 5.0
     for name, color, linestyle, label, fixed_text_x, text_y in series:
         vals = series_values(df, name)
@@ -1416,12 +1417,23 @@ CMP_COLOR_LIST_LIGHT = [
 ]
 
 
+def set_white_background(fig: plt.Figure) -> plt.Figure:
+    """Keep notebook and saved figures on an opaque white background."""
+
+    fig.patch.set_facecolor("white")
+    fig.patch.set_alpha(1.0)
+    for ax in fig.axes:
+        ax.set_facecolor("white")
+    return fig
+
+
 def save_both(fig: plt.Figure, base: Path, dpi: int = 220, bbox_inches: str | None = "tight") -> None:
+    set_white_background(fig)
     kwargs = {"dpi": dpi}
     if bbox_inches is not None:
         kwargs["bbox_inches"] = bbox_inches
-    fig.savefig(base.with_suffix(".pdf"), format="pdf", **kwargs)
-    fig.savefig(base.with_suffix(".png"), **kwargs)
+    fig.savefig(base.with_suffix(".pdf"), format="pdf", facecolor="white", transparent=False, **kwargs)
+    fig.savefig(base.with_suffix(".png"), facecolor="white", transparent=False, **kwargs)
 
 
 def numeric(df: pd.DataFrame, col: str) -> pd.Series:
@@ -1593,6 +1605,7 @@ def bar_with_bootstrap_ci(
     show_legend: bool = False,
 ) -> plt.Figure:
     fig, ax = plt.subplots(1, 1, figsize=(4, 3))
+    set_white_background(fig)
     y_num = pd.to_numeric(y, errors="coerce")
     x_num = pd.to_numeric(x, errors="coerce")
     centers, vals_per_bin = binned_values(x_num, y_num, edges)
@@ -1717,7 +1730,9 @@ def radar_azimuth(
     ci_highs = np.array([np.nan if len(v) == 0 else bootstrap_ci_stat(v, agg="median")[1] for v in vals_per_bin])
     theta = np.radians(centers)
     fig = plt.figure(figsize=(4, 3))
+    set_white_background(fig)
     ax = fig.add_subplot(111, polar=True)
+    ax.set_facecolor("white")
     ax.set_position([0.0, 0.0, 1.0, 1.0])
     ax.set_theta_zero_location("N")
     ax.set_theta_direction(-1)
@@ -1783,6 +1798,7 @@ def plot_scene_cdf(all_df: pd.DataFrame, out_base: Path | None = None) -> plt.Fi
     y_all = pd.to_numeric(scene_df.get("score"), errors="coerce").dropna().clip(lower=-1.0, upper=1.0)
     overall_mpr = float(np.median(y_all)) if len(y_all) else np.nan
     fig, ax = plt.subplots(1, 1, figsize=(4, 3))
+    set_white_background(fig)
     for scene_label in scenes_order:
         mask_scene = scene_df.get("scene").astype(str) == scene_label
         pr_scene = pd.to_numeric(scene_df.loc[mask_scene, "score"], errors="coerce").dropna().clip(lower=-1.0, upper=1.0).sort_values()
@@ -1822,6 +1838,146 @@ def plot_scene_cdf(all_df: pd.DataFrame, out_base: Path | None = None) -> plt.Fi
     if out_base is not None:
         save_both(fig, out_base)
         plt.close(fig)
+    return fig
+
+
+def mark_recompute(fig: plt.Figure, label: str = "recompute") -> plt.Figure:
+    """Add a compact recompute marker to notebook-rendered figures."""
+
+    set_white_background(fig)
+    fig.text(
+        0.985,
+        0.985,
+        label,
+        ha="right",
+        va="top",
+        fontsize=MEDIUM_FONT_SIZE,
+        color="#0B7285",
+        weight="bold",
+        bbox={"boxstyle": "round,pad=0.25", "facecolor": "#E7F5FF", "edgecolor": "#74C0FC", "linewidth": 0.8},
+    )
+    return fig
+
+
+def plot_score_reproduction_check(summary: pd.DataFrame) -> plt.Figure:
+    """Visualize the online-estimated-direction-to-score exact-match check."""
+
+    row = summary.iloc[0]
+    fig, axes = plt.subplots(1, 2, figsize=(7, 2.7))
+    set_white_background(fig)
+    axes[0].bar(["matched", "total"], [float(row["matches"]), float(row["rows"])], color=["#2B8A3E", "#ADB5BD"], edgecolor="black")
+    axes[0].set_ylabel("Rows")
+    axes[0].set_title("Score rows")
+    axes[0].grid(True, axis="y", linestyle="--", alpha=0.35)
+
+    axes[1].bar(["max abs error", "mean abs error"], [float(row["max_abs_error"]), float(row["mean_abs_error"])], color=["#1971C2", "#74C0FC"], edgecolor="black")
+    axes[1].set_yscale("symlog", linthresh=1e-16)
+    axes[1].set_title("Floating-point error")
+    axes[1].grid(True, axis="y", linestyle="--", alpha=0.35)
+    fig.suptitle("Online estimated direction -> released score")
+    fig.tight_layout()
+    return fig
+
+
+def plot_score_distribution_comparison(comparison: pd.DataFrame) -> plt.Figure:
+    """Compare released and recomputed projection-rate distributions."""
+
+    released = pd.to_numeric(comparison["released_score"], errors="coerce").dropna().clip(lower=-1.0, upper=1.0)
+    recomputed = pd.to_numeric(comparison["recomputed_score"], errors="coerce").dropna().clip(lower=-1.0, upper=1.0)
+    fig, axes = plt.subplots(1, 2, figsize=(8, 3))
+    set_white_background(fig)
+
+    for values, label, color, linestyle in [
+        (released, "released online direction", "#212529", "-"),
+        (recomputed, "recompute from RSSI", "#0B7285", "--"),
+    ]:
+        sorted_values = values.sort_values()
+        if len(sorted_values) == 0:
+            continue
+        cdf = np.arange(1, len(sorted_values) + 1) / float(len(sorted_values))
+        axes[0].plot(sorted_values.values, cdf, color=color, linestyle=linestyle, linewidth=2.0, label=f"{label} (MedPR={float(sorted_values.median()):.3f})")
+
+    axes[0].set_xlim(0.0, 1.0)
+    axes[0].set_ylim(0.0, 1.0)
+    axes[0].set_xlabel("Projection Rate")
+    axes[0].set_ylabel("Empirical CDF")
+    axes[0].grid(True, linestyle="--", alpha=0.35)
+    axes[0].legend(loc="upper left", fontsize=MEDIUM_FONT_SIZE)
+
+    metrics = [
+        ("mean", released.mean(), recomputed.mean()),
+        ("median", released.median(), recomputed.median()),
+        ("q20", released.quantile(0.20), recomputed.quantile(0.20)),
+        ("PR>=0.95", (released >= 0.95).mean(), (recomputed >= 0.95).mean()),
+    ]
+    x = np.arange(len(metrics))
+    width = 0.36
+    axes[1].bar(x - width / 2, [m[1] for m in metrics], width=width, color="#ADB5BD", edgecolor="black", label="released")
+    axes[1].bar(x + width / 2, [m[2] for m in metrics], width=width, color="#66D9E8", edgecolor="black", label="recompute")
+    axes[1].set_xticks(x)
+    axes[1].set_xticklabels([m[0] for m in metrics], rotation=20, ha="right")
+    axes[1].set_ylim(0.0, 1.0)
+    axes[1].set_ylabel("Projection Rate / fraction")
+    axes[1].grid(True, axis="y", linestyle="--", alpha=0.35)
+    axes[1].legend(loc="lower right", fontsize=MEDIUM_FONT_SIZE)
+    fig.suptitle("Fig.11(a) distribution check")
+    mark_recompute(fig)
+    fig.tight_layout()
+    return fig
+
+
+def plot_direction_replay_attribution(comparison: pd.DataFrame) -> plt.Figure:
+    """Show whether score differences come from the RSSI-to-direction replay layer."""
+
+    grouped = (
+        comparison.assign(direction_group=np.where(comparison["estimated_direction_exact"], "same direction", "changed direction"))
+        .groupby("direction_group")
+        .agg(
+            rows=("score_delta", "size"),
+            mean_delta=("score_delta", "mean"),
+            improved=("score_relation", lambda s: int((s == "improved").sum())),
+            decreased=("score_relation", lambda s: int((s == "decreased").sum())),
+            unchanged=("score_relation", lambda s: int((s == "unchanged").sum())),
+        )
+        .reindex(["same direction", "changed direction"])
+        .reset_index()
+    )
+
+    fig, axes = plt.subplots(1, 2, figsize=(8, 3))
+    set_white_background(fig)
+    axes[0].bar(grouped["direction_group"], grouped["rows"], color=["#ADB5BD", "#66D9E8"], edgecolor="black")
+    axes[0].set_ylabel("Rows")
+    axes[0].set_title("Estimated direction agreement")
+    axes[0].grid(True, axis="y", linestyle="--", alpha=0.35)
+
+    axes[1].bar(grouped["direction_group"], grouped["mean_delta"], color=["#ADB5BD", "#66D9E8"], edgecolor="black")
+    axes[1].axhline(0, color="black", linewidth=1.0)
+    axes[1].set_ylabel("Mean score delta")
+    axes[1].set_title("Score delta by direction agreement")
+    axes[1].grid(True, axis="y", linestyle="--", alpha=0.35)
+    fig.suptitle("RSSI replay attribution")
+    mark_recompute(fig)
+    fig.tight_layout()
+    return fig
+
+
+def plot_score_relation_counts(summary: pd.DataFrame) -> plt.Figure:
+    """Show unchanged, improved, and decreased score counts after RSSI replay."""
+
+    row = summary.iloc[0]
+    labels = ["unchanged", "improved", "decreased"]
+    values = [int(row["unchanged"]), int(row["improved"]), int(row["decreased"])]
+    colors = ["#ADB5BD", "#2B8A3E", "#C92A2A"]
+    fig, ax = plt.subplots(1, 1, figsize=(5.6, 3.0))
+    set_white_background(fig)
+    bars = ax.bar(labels, values, color=colors, edgecolor="black")
+    ax.set_ylabel("Rows")
+    ax.set_title("Score change after RSSI replay")
+    ax.grid(True, axis="y", linestyle="--", alpha=0.35)
+    for bar, value in zip(bars, values):
+        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height(), f"{value:,}", ha="center", va="bottom")
+    mark_recompute(fig)
+    fig.tight_layout()
     return fig
 
 
@@ -2187,12 +2343,28 @@ def fig11_direction_finding_figures(root: str | Path | None = None) -> list[tupl
 
     r = _root(root)
     data_path = r / "data" / "fig11_direction_finding" / "fig11_direction_finding_dataset.csv"
-    all_df = logged_direction_columns(pd.read_csv(data_path, low_memory=False))
+    figures = fig11_direction_finding_figures_from_frame(pd.read_csv(data_path, low_memory=False), title_prefix="Figure 11")
+
+    df_h = pd.read_csv(r / "data" / "fig11h_arraytrack_comparison" / "fig11h_arraytrack_errors.csv")
+    figures.append(("Figure 11(h), Wi2SAR and ArrayTrack angular-error CDF", plot_cdf(df_h)))
+    return figures
+
+
+def fig11_direction_finding_figures_from_frame(
+    all_df: pd.DataFrame,
+    title_prefix: str = "Figure 11",
+    recompute: bool = False,
+) -> list[tuple[str, plt.Figure]]:
+    """Build Fig.11(a-g) display figures from an in-memory result table."""
+
+    all_df = logged_direction_columns(all_df)
     all_df["score"] = pd.to_numeric(all_df["score"], errors="coerce")
     y = pd.to_numeric(all_df.get("score"), errors="coerce")
     figures: list[tuple[str, plt.Figure]] = [
-        ("Figure 11(a), projection-rate CDF by scene", plot_scene_cdf(all_df)),
+        (f"{title_prefix}(a), projection-rate CDF by scene", plot_scene_cdf(all_df)),
     ]
+    if recompute:
+        figures[-1] = (figures[-1][0] + " [recompute]", mark_recompute(figures[-1][1]))
 
     selected_placements = [
         "In backpack",
@@ -2215,22 +2387,18 @@ def fig11_direction_finding_figures(root: str | Path | None = None) -> list[tupl
             placement_to_idx = {p: i for i, p in enumerate(present)}
             x_codes = df_p["placement"].astype(str).map(placement_to_idx).astype(float)
             colors = [CMP_COLOR_LIST_LIGHT[i % len(CMP_COLOR_LIST_LIGHT)] for i in range(len(present))]
-            figures.append(
-                (
-                    "Figure 11(b), median projection rate by placement",
-                    bar_with_bootstrap_ci(
-                        y=df_p["score"],
-                        x=x_codes,
-                        edges=np.arange(0.0, float(len(present)) + 1.0, 1.0),
-                        xlabel="Placement",
-                        out_base=None,
-                        hide_xticks=True,
-                        label_texts=present,
-                        margin_ratio=0.15,
-                        colors=colors,
-                    ),
-                )
+            fig = bar_with_bootstrap_ci(
+                y=df_p["score"],
+                x=x_codes,
+                edges=np.arange(0.0, float(len(present)) + 1.0, 1.0),
+                xlabel="Placement",
+                out_base=None,
+                hide_xticks=True,
+                label_texts=present,
+                margin_ratio=0.15,
+                colors=colors,
             )
+            figures.append((f"{title_prefix}(b), median projection rate by placement", mark_recompute(fig) if recompute else fig))
 
     az = pd.to_numeric(all_df.get("phone_rel_azimuth"), errors="coerce") % 360.0
     elev_true = pd.to_numeric(all_df.get("elevation"), errors="coerce")
@@ -2240,84 +2408,68 @@ def fig11_direction_finding_figures(root: str | Path | None = None) -> list[tupl
     mask = elev_true.between(0.0, 90.0) & dist.between(0.0, 280.0)
     azimuth_fig = radar_azimuth(y=y[mask], azimuth_deg=az[mask], edges=np.arange(0.0, 370.0, 10.0), out_base=None)
     if azimuth_fig is not None:
-        figures.append(("Figure 11(c), median projection rate by incident azimuth", azimuth_fig))
+        figures.append((f"{title_prefix}(c), median projection rate by incident azimuth", mark_recompute(azimuth_fig) if recompute else azimuth_fig))
 
     te = pd.to_numeric(all_df.get("phone_rel_elevation"), errors="coerce")
     mx = np.ceil(max(15.0, float(te.max(skipna=True) if te.notna().any() else 90.0)) / 5.0) * 5.0
-    figures.append(
-        (
-            "Figure 11(d), median projection rate by incident elevation",
-            bar_with_bootstrap_ci(
-                y=y.loc[te.index],
-                x=te,
-                edges=np.arange(15.0, mx + 5.0, 5.0),
-                xlabel="Elevation (deg)",
-                out_base=None,
-                xtick_min=15.0,
-                xtick_max=90.0,
-                xtick_step=5.0,
-                add_x_padding=True,
-            ),
-        )
+    fig = bar_with_bootstrap_ci(
+        y=y.loc[te.index],
+        x=te,
+        edges=np.arange(15.0, mx + 5.0, 5.0),
+        xlabel="Elevation (deg)",
+        out_base=None,
+        xtick_min=15.0,
+        xtick_max=90.0,
+        xtick_step=5.0,
+        add_x_padding=True,
     )
+    figures.append((f"{title_prefix}(d), median projection rate by incident elevation", mark_recompute(fig) if recompute else fig))
 
     ds = pd.to_numeric(all_df.get("drone_speed"), errors="coerce")
     ds = ds[ds.between(0.0, 5.5)]
-    figures.append(
-        (
-            "Figure 11(e), median projection rate by drone speed",
-            bar_with_bootstrap_ci(
-                y=y.loc[ds.index],
-                x=ds,
-                edges=np.arange(0.0, 5.5 + 0.5, 0.5),
-                xlabel="Drone speed (m/s)",
-                out_base=None,
-                xtick_min=0.0,
-                xtick_max=5.5,
-                xtick_step=0.5,
-                add_x_padding=True,
-            ),
-        )
+    fig = bar_with_bootstrap_ci(
+        y=y.loc[ds.index],
+        x=ds,
+        edges=np.arange(0.0, 5.5 + 0.5, 0.5),
+        xlabel="Drone speed (m/s)",
+        out_base=None,
+        xtick_min=0.0,
+        xtick_max=5.5,
+        xtick_step=0.5,
+        add_x_padding=True,
     )
+    figures.append((f"{title_prefix}(e), median projection rate by drone speed", mark_recompute(fig) if recompute else fig))
 
     distance = fig11_distance_samples(all_df)
-    figures.append(
-        (
-            "Figure 11(f), median projection rate by drone-target distance",
-            bar_with_bootstrap_ci(
-                y=y.loc[distance.index],
-                x=distance,
-                edges=np.arange(30.0, 500.0, 50.0),
-                xlabel="Distance (m)",
-                out_base=None,
-                xtick_min=30.0,
-                xtick_max=430.0,
-                xtick_step=50.0,
-                add_x_padding=True,
-            ),
-        )
+    fig = bar_with_bootstrap_ci(
+        y=y.loc[distance.index],
+        x=distance,
+        edges=np.arange(30.0, 500.0, 50.0),
+        xlabel="Distance (m)",
+        out_base=None,
+        xtick_min=30.0,
+        xtick_max=430.0,
+        xtick_step=50.0,
+        add_x_padding=True,
     )
+    figures.append((f"{title_prefix}(f), median projection rate by drone-target distance", mark_recompute(fig) if recompute else fig))
 
     avg_rssi = pd.to_numeric(all_df.get("avg_rssi"), errors="coerce")
-    figures.append(
-        (
-            "Figure 11(g), median projection rate by average RSS",
-            bar_with_bootstrap_ci(
-                y=y.loc[avg_rssi.index],
-                x=avg_rssi,
-                edges=np.arange(-96.0, -66.0 + 3.0, 3.0),
-                xlabel="Average RSS (dBm)",
-                out_base=None,
-                xtick_min=-96.0,
-                xtick_max=-66.0,
-                xtick_step=6.0,
-                add_x_padding=True,
-            ),
-        )
+    fig = bar_with_bootstrap_ci(
+        y=y.loc[avg_rssi.index],
+        x=avg_rssi,
+        edges=np.arange(-96.0, -66.0 + 3.0, 3.0),
+        xlabel="Average RSS (dBm)",
+        out_base=None,
+        xtick_min=-96.0,
+        xtick_max=-66.0,
+        xtick_step=6.0,
+        add_x_padding=True,
     )
+    figures.append((f"{title_prefix}(g), median projection rate by average RSS", mark_recompute(fig) if recompute else fig))
 
-    df_h = pd.read_csv(r / "data" / "fig11h_arraytrack_comparison" / "fig11h_arraytrack_errors.csv")
-    figures.append(("Figure 11(h), Wi2SAR and ArrayTrack angular-error CDF", plot_cdf(df_h)))
+    if recompute:
+        figures = [(title if title.endswith("[recompute]") else title + " [recompute]", fig) for title, fig in figures]
     return figures
 
 
